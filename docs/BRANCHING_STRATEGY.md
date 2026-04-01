@@ -22,14 +22,14 @@ gitGraph
     
     checkout main
     merge feature/2-authentication
-    tag: "v1.1.0"
+    commit id: "v1.1.0 リリース"
     
     checkout feature/3-profile
     commit id: "プロフィール編集"
     
     checkout main
     merge feature/3-profile
-    tag: "v1.2.0"
+    commit id: "v1.2.0 リリース"
     commit id: "ドキュメント更新"
     
     branch hotfix/critical-bug
@@ -38,7 +38,7 @@ gitGraph
     
     checkout main
     merge hotfix/critical-bug
-    tag: "v1.2.1"
+    commit id: "v1.2.1 ホットフィックス"
 ```
 
 ## ブランチ構成
