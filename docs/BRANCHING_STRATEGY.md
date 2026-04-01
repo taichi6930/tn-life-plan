@@ -27,6 +27,76 @@ graph LR
 - main からチェックアウトして作成
 - PR によるコードレビュー後に merge
 
+## Git フロー図（詳細）
+
+```mermaid
+gitGraph
+    commit id: "v1.0.0"
+    commit id: "機能A追加"
+    
+    branch feature/2-authentication
+    checkout feature/2-authentication
+    commit id: "ユーザー認証実装"
+    commit id: "テスト追加"
+    
+    branch feature/3-profile
+    checkout feature/3-profile
+    commit id: "プロフィール機能"
+    
+    checkout main
+    merge feature/2-authentication
+    tag: "v1.1.0"
+    
+    checkout feature/3-profile
+    commit id: "プロフィール編集"
+    
+    checkout main
+    merge feature/3-profile
+    tag: "v1.2.0"
+    commit id: "ドキュメント更新"
+    
+    branch hotfix/critical-bug
+    checkout hotfix/critical-bug
+    commit id: "緊急バグ修正"
+    
+    checkout main
+    merge hotfix/critical-bug
+    tag: "v1.2.1"
+```
+
+## ワークフロー図（プロセス）
+
+```mermaid
+graph TD
+    A["①ブランチ作成<br/>git checkout -b feature/xxx"] 
+    B["②開発・コミット<br/>git commit"]
+    C["③Push<br/>git push origin feature/xxx"]
+    D["④PR 作成<br/>GitHub上で作成"]
+    E["⑤レビュー<br/>Approve 待ち"]
+    F{"Approve?"}
+    G["⑥Merge<br/>PR をマージ"]
+    H["⑦完了<br/>ブランチ削除"]
+    
+    A --> B
+    B --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|修正必要| B
+    F -->|OK| G
+    G --> H
+    
+    style A fill:#2196F3,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#2196F3,color:#fff
+    style D fill:#FF9800,color:#fff
+    style E fill:#FF9800,color:#fff
+    style F fill:#9C27B0,color:#fff
+    style G fill:#4CAF50,color:#fff
+    style H fill:#4CAF50,color:#fff
+```
+
 ## ブランチ命名規則
 
 ```
