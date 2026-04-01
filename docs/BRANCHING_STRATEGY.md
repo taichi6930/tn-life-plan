@@ -4,30 +4,7 @@
 
 このプロジェクトは **GitHub Flow** を採用しています。シンプルで効果的なワークフローにより、継続的なデリバリーを実現します。
 
-## ブランチ構成
-
-```mermaid
-graph LR
-    A["main<br/>(本番環境)"] -->|PR / Merge| B["feature/xxx<br/>(機能開発)"]
-    B -->|レビュー| A
-    
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-```
-
-### main ブランチ
-- **常にデプロイ可能な状態**を保つ
-- 本番環境のコード
-- 直接コミットは禁止
-- PR による merge のみ許可
-- タグでリリースバージョンを管理
-
-### feature ブランチ
-- 新機能・バグ修正を実装
-- main からチェックアウトして作成
-- PR によるコードレビュー後に merge
-
-## Git フロー図（詳細）
+## Git フロー図
 
 ```mermaid
 gitGraph
@@ -64,38 +41,19 @@ gitGraph
     tag: "v1.2.1"
 ```
 
-## ワークフロー図（プロセス）
+## ブランチ構成
 
-```mermaid
-graph TD
-    A["①ブランチ作成<br/>git checkout -b feature/xxx"] 
-    B["②開発・コミット<br/>git commit"]
-    C["③Push<br/>git push origin feature/xxx"]
-    D["④PR 作成<br/>GitHub上で作成"]
-    E["⑤レビュー<br/>Approve 待ち"]
-    F{"Approve?"}
-    G["⑥Merge<br/>PR をマージ"]
-    H["⑦完了<br/>ブランチ削除"]
-    
-    A --> B
-    B --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F -->|修正必要| B
-    F -->|OK| G
-    G --> H
-    
-    style A fill:#2196F3,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#2196F3,color:#fff
-    style D fill:#FF9800,color:#fff
-    style E fill:#FF9800,color:#fff
-    style F fill:#9C27B0,color:#fff
-    style G fill:#4CAF50,color:#fff
-    style H fill:#4CAF50,color:#fff
-```
+### main ブランチ
+- **常にデプロイ可能な状態**を保つ
+- 本番環境のコード
+- 直接コミットは禁止
+- PR による merge のみ許可
+- タグでリリースバージョンを管理
+
+### feature ブランチ
+- 新機能・バグ修正を実装
+- main からチェックアウトして作成
+- PR によるコードレビュー後に merge
 
 ## ブランチ命名規則
 
