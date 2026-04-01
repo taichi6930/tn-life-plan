@@ -1,0 +1,57 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Icon must end with two \r
+Icon?
+
+# Trashes
+.Trashes
+
+# Spotlight
+.Spotlight-V100
+
+# macOS system files
+.fseventsd
+
+# VS Code
+.vscode/
+.history/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# Others
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Git
+*.orig
+
