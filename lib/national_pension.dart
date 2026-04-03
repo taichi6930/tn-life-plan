@@ -1,9 +1,7 @@
 /// 国民年金計算ドメインモデル
-/// 
-/// 国民年金の計算に必要なすべてのクラスを含む：
-/// - NationalPensionInput: 入力パラメータ
-/// - PensionResult: 計算結果
-/// - PensionCalculator: 計算エンジン
+///
+/// 国民年金の計算に必要なクラスを含む：
+/// - NationalPensionInput: 入力パラメータ管理・有効納付月数計算
 
 /// 国民年金計算の入力パラメータを管理するクラス
 ///
@@ -79,7 +77,9 @@ class NationalPensionInput {
         (quarterExemptMonths * 7 / 8);
 
     // 480ヶ月を超えたら480ヶ月にしてしまう
-    return effective > maxContributionMonths ? maxContributionMonths.toDouble() : effective;
+    return effective > maxContributionMonths
+        ? maxContributionMonths.toDouble()
+        : effective;
   }
 
   /// 納付率を計算する
@@ -89,15 +89,15 @@ class NationalPensionInput {
     return getEffectiveContributionMonths() / maxContributionMonths;
   }
 
-  /// 現在の基本年金月額を取得する
+  /// 納付率を適用した年金月額を取得する
   /// 毎年4月に物価スライドに基づいて改定される
-  double getCurrentBasicPensionMonthlyAmount() {
-    return basicPensionMonthlyAmount;
+  double getApplicablePensionMonthlyAmount() {
+    return basicPensionMonthlyAmount * getContributionRate();
   }
 
-  /// 現在の基本年金年額を取得する
-  double getCurrentBasicPensionAnnualAmount() {
-    return basicPensionMonthlyAmount * 12;
+  /// 納付率を適用した年金年額を取得する
+  double getApplicablePensionAnnualAmount() {
+    return getApplicablePensionMonthlyAmount() * 12;
   }
 
   @override
@@ -115,4 +115,4 @@ NationalPensionInput(
 )
     ''';
   }
-  }
+}
