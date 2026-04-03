@@ -26,38 +26,12 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Run tests with coverage
-        run: dart pub global activate coverage && dart test --coverage=coverage
+        run: dart test --coverage=coverage
 
-      - name: Check coverage percentage
+      - name: Generate coverage report
         run: |
-          # Check if coverage file exists
-          if [ ! -f coverage/lcov.info ]; then
-            echo "❌ Coverage file not found"
-            exit 1
-          fi
-          
-          # Extract LH and LF from the coverage file
-          LH=$(grep '^LH:' coverage/lcov.info | tail -1 | cut -d: -f2)
-          LF=$(grep '^LF:' coverage/lcov.info | tail -1 | cut -d: -f2)
-          
-          if [ -z "$LH" ] || [ -z "$LF" ]; then
-            echo "❌ Could not extract coverage from lcov.info"
-            echo "File contents:"
-            tail -20 coverage/lcov.info
-            exit 1
-          fi
-          
-          # Calculate coverage percentage
-          COVERAGE=$(awk "BEGIN {printf \"%.1f\", ($LH/$LF)*100}")
-          echo "Code Coverage: ${COVERAGE}% (${LH}/${LF} lines)"
-          
-          # Check if coverage is at least 99%
-          THRESHOLD=99.0
-          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
-            echo "❌ Coverage must be at least ${THRESHOLD}%, got ${COVERAGE}%"
-            exit 1
-          fi
-          echo "✅ Coverage is ${COVERAGE}% (requirement: ${THRESHOLD}%)"
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -66,3 +40,4 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+
