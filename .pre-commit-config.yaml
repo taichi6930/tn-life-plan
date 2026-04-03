@@ -1,0 +1,17 @@
+repos:
+  - repo: local
+    hooks:
+      - id: dart-analyze
+        name: Dart Analyze
+        entry: dart analyze
+        language: system
+        types: [ dart ]
+        pass_filenames: false
+
+      - id: dart-format
+        name: Dart Format
+        entry: dart format --set-exit-if-changed .
+        language: system
+        types: [ dart ]
+        pass_filenames: false
+        always_run: true

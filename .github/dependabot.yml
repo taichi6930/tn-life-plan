@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # Dart パッケージの更新
+  - package-ecosystem: "pub"
+    directory: "/"
+    # 毎日09:00にチェック実行
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    # Cool期間: 更新種別ごとに異なる様子見期間を設定
+    # - メジャーアップデート: 7日
+    # - マイナーアップデート: 3日
+    # - パッチ（セキュリティ）: 1日
+    cooldown:
+      default-days: 5
+      semver-major-days: 7
+      semver-minor-days: 3
+      semver-patch-days: 1
+    # 同時に開くPRは最大5つまで
+    open-pull-requests-limit: 5
+    # ベースブランチ更新時に自動でリベース
+    rebase-strategy: "auto"
+    # 作成されるPRに付与するラベル
+    labels:
+      - "dependencies"
+      - "dart"
+    # コミットメッセージの形式
+    commit-message:
+      prefix: "chore(deps)"
