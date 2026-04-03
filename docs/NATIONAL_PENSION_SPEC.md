@@ -49,9 +49,9 @@
 - **法定範囲**: 60～75歳（繰上げ・繰下げ制度で調整可能）
 
 ### 完全納付期間
-- **期間**: 540月間（40年間）
+- **期間**: 480月間（40年間）
 - **対象年齢**: 20歳～60歳
-- **条件**: 540月フル納付のみ、基本月額の100%を受給可能
+- **条件**: 480月フル納付のみ、基本月額の100%を受給可能
 
 ---
 
@@ -96,7 +96,7 @@
     + (1/4免除月数 × 7/8)
 ```
 
-**制約**: 有効納付月数は 0～540月の範囲
+**制約**: 有効納付月数は 0～480月の範囲
 
 ---
 
@@ -330,7 +330,7 @@ desiredPensionStartAge: 60歳
 | `halfExempt` | ≥ 0 |
 | `quarterExempt` | ≥ 0 |
 | `studentDeferment` | ≥ 0 |
-| `effectiveContributionMonths` | 0 ≤ x ≤ 540月 |
+| `effectiveContributionMonths` | 0 ≤ x ≤ 480月 |
 | `desiredPensionStartAge` | 60 ≤ x ≤ 75歳 |
 | `hasPaymentSuspension` | bool |
 
