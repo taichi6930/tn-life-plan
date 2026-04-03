@@ -215,4 +215,161 @@ void main() {
       });
     });
   });
+
+  group('EarlyLateAdjustmentCalculator', () {
+    /// デシジョンテーブル（受給開始年齢による調整率計算）:
+    ///
+    /// | # | 受給年齢 | 月数差 | 期待調整率 | 説明 |
+    /// |----|--------|--------|----------|------|
+    /// | 1 | 60 | -60 | 0.76 | 繰上げ最大（24%減） |
+    /// | 2 | 61 | -48 | 0.808 | 繰上げ4年 |
+    /// | 3 | 62 | -36 | 0.856 | 繰上げ3年 |
+    /// | 4 | 63 | -24 | 0.904 | 繰上げ2年 |
+    /// | 5 | 64 | -12 | 0.952 | 繰上げ1年 |
+    /// | 6 | 65 | 0 | 1.0 | 標準受給（調整なし） |
+    /// | 7 | 66 | 12 | 1.084 | 繰下げ1年 |
+    /// | 8 | 70 | 60 | 1.42 | 繰下げ5年（42%増） |
+    /// | 9 | 75 | 120 | 1.84 | 繰下げ最大（84%増） |
+    /// | 10 | 59 | - | invalid | 最小年齢未満 |
+    /// | 11 | 76 | - | invalid | 最大年齢超過 |
+
+    group('isValid()', () {
+      test('受給年齢60歳は有効', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 60);
+        expect(calc.isValid(), isTrue);
+      });
+
+      test('受給年齢65歳は有効', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 65);
+        expect(calc.isValid(), isTrue);
+      });
+
+      test('受給年齢75歳は有効', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 75);
+        expect(calc.isValid(), isTrue);
+      });
+
+      test('受給年齢59歳は無効', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 59);
+        expect(calc.isValid(), isFalse);
+      });
+
+      test('受給年齢76歳は無効', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 76);
+        expect(calc.isValid(), isFalse);
+      });
+    });
+
+    group('getAdjustmentRate()', () {
+      test('デシジョンテーブル #1: 繰上げ最大（60歳）= 0.76', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 60);
+        expect(calc.getAdjustmentRate(), closeTo(0.76, 0.001));
+      });
+
+      test('デシジョンテーブル #2: 繰上げ4年（61歳）= 0.808', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 61);
+        expect(calc.getAdjustmentRate(), closeTo(0.808, 0.001));
+      });
+
+      test('デシジョンテーブル #3: 繰上げ3年（62歳）= 0.856', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 62);
+        expect(calc.getAdjustmentRate(), closeTo(0.856, 0.001));
+      });
+
+      test('デシジョンテーブル #4: 繰上げ2年（63歳）= 0.904', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 63);
+        expect(calc.getAdjustmentRate(), closeTo(0.904, 0.001));
+      });
+
+      test('デシジョンテーブル #5: 繰上げ1年（64歳）= 0.952', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 64);
+        expect(calc.getAdjustmentRate(), closeTo(0.952, 0.001));
+      });
+
+      test('デシジョンテーブル #6: 標準受給（65歳）= 1.0', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 65);
+        expect(calc.getAdjustmentRate(), closeTo(1.0, 0.001));
+      });
+
+      test('デシジョンテーブル #7: 繰下げ1年（66歳）= 1.084', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 66);
+        expect(calc.getAdjustmentRate(), closeTo(1.084, 0.001));
+      });
+
+      test('デシジョンテーブル #8: 繰下げ5年（70歳）= 1.42', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 70);
+        expect(calc.getAdjustmentRate(), closeTo(1.42, 0.001));
+      });
+
+      test('デシジョンテーブル #9: 繰下げ最大（75歳）= 1.84', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 75);
+        expect(calc.getAdjustmentRate(), closeTo(1.84, 0.001));
+      });
+
+      test('無効な年齢でgetAdjustmentRateを呼ぶと例外発生', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 59);
+        expect(
+          () => calc.getAdjustmentRate(),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+    });
+
+    group('applyAdjustment()', () {
+      test('60歳受給で月額70608円× 0.76 = 53662円', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 60);
+        final adjusted = calc.applyAdjustment(70608.0);
+        expect(adjusted, closeTo(70608.0 * 0.76, 0.1));
+      });
+
+      test('65歳受給で月額70608円× 1.0 = 70608円（調整なし）', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 65);
+        final adjusted = calc.applyAdjustment(70608.0);
+        expect(adjusted, closeTo(70608.0, 0.1));
+      });
+
+      test('70歳受給で月額70608円× 1.42 = 100263円', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 70);
+        final adjusted = calc.applyAdjustment(70608.0);
+        expect(adjusted, closeTo(70608.0 * 1.42, 0.1));
+      });
+    });
+
+    group('applyAnnualAdjustment()', () {
+      test('60歳受給で年額847296円× 0.76 = 643945円', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 60);
+        final adjusted = calc.applyAnnualAdjustment(847296.0);
+        expect(adjusted, closeTo(847296.0 * 0.76, 0.1));
+      });
+
+      test('70歳受給で年額847296円× 1.42 = 1203140円', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 70);
+        final adjusted = calc.applyAnnualAdjustment(847296.0);
+        expect(adjusted, closeTo(847296.0 * 1.42, 0.1));
+      });
+    });
+
+    group('toString()', () {
+      test('60歳受給の文字列表現', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 60);
+        final str = calc.toString();
+        expect(str, contains('awardAge: 60'));
+        expect(str, contains('0.76'));
+      });
+
+      test('65歳受給の文字列表現', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 65);
+        final str = calc.toString();
+        expect(str, contains('awardAge: 65'));
+        expect(str, contains('1.00'));
+      });
+
+      test('70歳受給の文字列表現', () {
+        final calc = EarlyLateAdjustmentCalculator(awardAge: 70);
+        final str = calc.toString();
+        expect(str, contains('awardAge: 70'));
+        expect(str, contains('1.42'));
+      });
+    });
+  });
 }
